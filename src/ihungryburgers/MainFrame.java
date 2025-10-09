@@ -10,12 +10,13 @@ package ihungryburgers;
  */
 import javax.swing.*;
 import java.awt.*;
-import models.OrderCollection;
+import models.OrderList;
+import utils.StorageManager;
 
 class MainFrame extends JFrame {
 
     private JPanel cards;
-    private final OrderCollection collection;
+    private final OrderList orderList;
 
     public MainFrame() {
         setTitle("iHungry Burgers Shop");
@@ -25,19 +26,19 @@ class MainFrame extends JFrame {
         setResizable(false);
 
         cards = new JPanel(new CardLayout());
-        this.collection = new OrderCollection();
+        this.orderList = StorageManager.loadOrderList();
 
         cards.add(new HomePanel(this), "HOME");
-        cards.add(new PlaceOrderPanel(this, collection), "PLACE_ORDER");
-        cards.add(new SearchBestCustomerPanel(this, collection), "BEST_CUSTOMER");
-        cards.add(new SearchOrderPanel(this, collection), "SEARCH_ORDER");
-        cards.add(new SearchCustomerPanel(this, collection), "SEARCH_CUSTOMER");
+        cards.add(new PlaceOrderPanel(this, orderList), "PLACE_ORDER");
+        cards.add(new SearchBestCustomerPanel(this, orderList), "BEST_CUSTOMER");
+        cards.add(new SearchOrderPanel(this, orderList), "SEARCH_ORDER");
+        cards.add(new SearchCustomerPanel(this, orderList), "SEARCH_CUSTOMER");
         cards.add(new ViewOrdersPanel(this), "VIEW_ORDERS");
-        cards.add(new PendingOrdersPanel(this, collection), "PENDING_ORDERS");
-        cards.add(new PreparingOrdersPanel(this, collection), "PREPARING_ORDERS");
-        cards.add(new DeliveredOrdersPanel(this, collection), "DELIVERED_ORDERS");
-        cards.add(new CancelledOrdersPanel(this, collection), "CANCELLED_ORDERS");
-        cards.add(new UpdateOrderPanel(this, collection), "UPDATE_ORDERS");
+        cards.add(new PendingOrdersPanel(this, orderList), "PENDING_ORDERS");
+        cards.add(new PreparingOrdersPanel(this, orderList), "PREPARING_ORDERS");
+        cards.add(new DeliveredOrdersPanel(this, orderList), "DELIVERED_ORDERS");
+        cards.add(new CancelledOrdersPanel(this, orderList), "CANCELLED_ORDERS");
+        cards.add(new UpdateOrderPanel(this, orderList), "UPDATE_ORDERS");
 
         add(cards);
 

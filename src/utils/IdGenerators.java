@@ -1,27 +1,52 @@
 package utils;
 
-import models.OrderCollection;
+import models.Order;
+import models.OrderList;
 
 public class IdGenerators {
 
-    private static int customerCount = 1;
+    private int nextCustomerNumber;
+    private OrderList orderList;
 
-    public static String peekNextCustomerId() {
-        String num = "" + customerCount;
+    public IdGenerators(OrderList orderList) {
+        this.orderList = orderList;
+        this.updateNextCustomerNumber();
+    }
+
+    private void updateNextCustomerNumber() {
+        if (orderList.isEmpty()) {
+            this.nextCustomerNumber = 1;
+            return;
+        }
+
+        Order[] ordersArr = orderList.toArray();
+        int maxCustomerNum = 0;
+
+        for (int i = 0; i < ordersArr.length; i++) {
+            int num = Integer.parseInt(ordersArr[i].getCustomerID().substring(1));
+            if (maxCustomerNum < num) {
+                maxCustomerNum = num;
+            }
+        }
+        this.nextCustomerNumber = maxCustomerNum + 1;
+    }
+
+    public String peekNextCustomerId() {
+        String num = String.valueOf(nextCustomerNumber);
         return "C" + pad(num);
     }
 
-    public static String genCustomerId() {
+    public String genCustomerId() {
         String id = peekNextCustomerId();
-        customerCount++;
+        nextCustomerNumber++;
         return id;
     }
 
-    public static String genOrderId(OrderCollection collection) {
-        return "O" + pad(String.valueOf(collection.getAll().length + 1));
+    public String genOrderId() {
+        return "O" + pad(String.valueOf(orderList.toArray().length + 1));
     }
 
-    private static String pad(String num) {
+    private String pad(String num) {
         while (num.length() < 3) {
             num = "0" + num;
         }

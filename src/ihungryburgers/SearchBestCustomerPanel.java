@@ -8,7 +8,7 @@ import java.awt.Color;
 import javax.swing.BorderFactory;
 import javax.swing.table.DefaultTableModel;
 import models.Order;
-import models.OrderCollection;
+import models.OrderList;
 import utils.KeyBindUtils;
 
 /**
@@ -18,15 +18,15 @@ import utils.KeyBindUtils;
 public class SearchBestCustomerPanel extends javax.swing.JPanel {
 
     private MainFrame mainFrame;
-    private OrderCollection collection;
+    private OrderList orderList;
 
     /**
      * Creates new form PlaceOrderPanel
      */
-    public SearchBestCustomerPanel(MainFrame mainFrame, OrderCollection collection) {
+    public SearchBestCustomerPanel(MainFrame mainFrame, OrderList orderList) {
         initComponents();
         this.mainFrame = mainFrame;
-        this.collection = collection;
+        this.orderList = orderList;
 
         btnBack.setBorder(BorderFactory.createLineBorder(new Color(0x27000c), 2, true));
 
@@ -44,13 +44,21 @@ public class SearchBestCustomerPanel extends javax.swing.JPanel {
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
         model.setRowCount(0);
 
-        OrderCollection uniqueList = collection.getUniqueList();
+        Order[] bestCustomerArr = orderList.getUniqueList().toArray();
+        for (int i = 1; i < bestCustomerArr.length; i++) {
+            for (int j = 0; j < i; j++) {
+                if (bestCustomerArr[j].getTotalPrice() < bestCustomerArr[i].getTotalPrice()) {
+                    Order tmp = bestCustomerArr[j];
+                    bestCustomerArr[j] = bestCustomerArr[i];
+                    bestCustomerArr[i] = tmp;
+                }
+            }
+        }
 
-        for (int i = 0; i < uniqueList.getAll().length; i++) {
-            String customerId = uniqueList.getAll()[i].getCustomerID();
-            String name = uniqueList.getAll()[i].getCustomerName();
-            double total = uniqueList.getAll()[i].getTotalPrice();
-
+        for (Order order : bestCustomerArr) {
+            String customerId = order.getCustomerID();
+            String name = order.getCustomerName();
+            double total = order.getTotalPrice();
             model.addRow(new Object[]{customerId, name, total});
         }
     }

@@ -8,12 +8,9 @@ import java.awt.Color;
 import javax.swing.BorderFactory;
 import javax.swing.JOptionPane;
 import models.Order;
-import static models.Order.CANCELLED;
-import static models.Order.DELIVERED;
-import static models.Order.PENDING;
-import static models.Order.PREPARING;
-import models.OrderCollection;
+import models.OrderList;
 import utils.KeyBindUtils;
+import utils.StorageManager;
 import utils.Utils;
 import utils.Validate;
 
@@ -24,21 +21,24 @@ import utils.Validate;
 public class UpdateOrderPanel extends javax.swing.JPanel {
 
     private MainFrame mainFrame;
-    private OrderCollection collection;
+    private OrderList orderList;
     private Order selectedOrder;
 
     /**
      * Creates new form PlaceOrderPanel
      */
-    public UpdateOrderPanel(MainFrame mainFrame, OrderCollection collection) {
+    public UpdateOrderPanel(MainFrame mainFrame, OrderList orderList) {
         initComponents();
         this.mainFrame = mainFrame;
-        this.collection = collection;
+        this.orderList = orderList;
 
         btnBack.setBorder(BorderFactory.createLineBorder(new Color(0x27000c), 2, true));
         btnUpdate.setBorder(BorderFactory.createLineBorder(new Color(0x27000c), 2, true));
 
         KeyBindUtils.bindKey(this, "ESCAPE", () -> btnBack.doClick());
+        KeyBindUtils.bindEnter(txtName, btnUpdate);
+        KeyBindUtils.bindEnter(txtOrderId, btnUpdate);
+        KeyBindUtils.bindEnter(txtQty, btnUpdate);
 
         this.addComponentListener(new java.awt.event.ComponentAdapter() {
             @Override
@@ -68,7 +68,7 @@ public class UpdateOrderPanel extends javax.swing.JPanel {
                 }
 
                 System.out.println("Searching...");
-                Order order = collection.findOrder(orderId);
+                Order order = orderList.findOrder(orderId);
 
                 if (order != null) {
                     UpdateOrderPanel.this.selectedOrder = order;
@@ -92,7 +92,6 @@ public class UpdateOrderPanel extends javax.swing.JPanel {
                         lblErr.setText("");
                         txtName.setEnabled(true);
                         txtQty.setEnabled(true);
-                        comboBoxStatus.setEnabled(true);
                     }
 
                 } else {
@@ -100,7 +99,6 @@ public class UpdateOrderPanel extends javax.swing.JPanel {
                 }
             }
 
-            // i really don't know what exactly @override does
             @Override
             public void insertUpdate(javax.swing.event.DocumentEvent e) {
                 showDetails();
@@ -164,6 +162,7 @@ public class UpdateOrderPanel extends javax.swing.JPanel {
         txtQty.setText("");
         comboBoxStatus.setSelectedIndex(0);
         txtTotal.setText("");
+        lblErr.setText("");
         txtOrderId.requestFocus();
     }
 
@@ -261,7 +260,6 @@ public class UpdateOrderPanel extends javax.swing.JPanel {
         comboBoxStatus.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         comboBoxStatus.setForeground(new java.awt.Color(0, 0, 0));
         comboBoxStatus.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Pending...", "Preparing", "Delivered", "Cancelled" }));
-        comboBoxStatus.setEnabled(false);
         comboBoxStatus.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 comboBoxStatusActionPerformed(evt);
@@ -417,7 +415,12 @@ public class UpdateOrderPanel extends javax.swing.JPanel {
 
         if (!selectedOrder.getCustomerName().equals(txtName.getText())) {
             needToUpdate = true;
-            selectedOrder.setCustomerName(txtName.getText());
+            for (int i = 0; i < orderList.size(); i++) {
+                if (orderList.toArray()[i].getCustomerID().equals(selectedOrder.getCustomerID())) {
+                    orderList.toArray()[i].setCustomerName(txtName.getText());
+                }
+            }
+//            selectedOrder.setCustomerName(txtName.getText());
         }
         if (!selectedOrder.getOrderStatus().equals((String) comboBoxStatus.getSelectedItem())) {
             needToUpdate = true;
@@ -433,9 +436,10 @@ public class UpdateOrderPanel extends javax.swing.JPanel {
                     UpdateOrderPanel.this,
                     "Nothing to update",
                     "Invalid Action",
-                    JOptionPane.ERROR_MESSAGE
+                    JOptionPane.WARNING_MESSAGE
             );
         } else {
+            StorageManager.refreshStorage(orderList);
             JOptionPane.showMessageDialog(
                     UpdateOrderPanel.this,
                     "Successfully Updated",

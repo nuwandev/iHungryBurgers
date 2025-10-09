@@ -8,7 +8,7 @@ import java.awt.Color;
 import javax.swing.BorderFactory;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import models.OrderCollection;
+import models.OrderList;
 import utils.KeyBindUtils;
 import utils.Utils;
 import utils.Validate;
@@ -20,15 +20,15 @@ import utils.Validate;
 public class SearchCustomerPanel extends javax.swing.JPanel {
 
     private MainFrame mainFrame;
-    private OrderCollection collection;
+    private OrderList orderList;
 
     /**
      * Creates new form PlaceOrderPanel
      */
-    public SearchCustomerPanel(MainFrame mainFrame, OrderCollection collection) {
+    public SearchCustomerPanel(MainFrame mainFrame, OrderList orderList) {
         initComponents();
         this.mainFrame = mainFrame;
-        this.collection = collection;
+        this.orderList = orderList;
 
         btnBack.setBorder(BorderFactory.createLineBorder(new Color(0x27000c), 2, true));
         KeyBindUtils.bindKey(this, "ESCAPE", () -> btnBack.doClick());
@@ -63,18 +63,18 @@ public class SearchCustomerPanel extends javax.swing.JPanel {
                     return;
                 }
 
-                OrderCollection customerInfo = collection.getCustomerInfo(customerId);
+                OrderList customerInfo = orderList.getCustomerInfo(customerId);
 
                 if (customerInfo == null) {
                     txtName.setText("");
                     model.setRowCount(0);
                 } else {
-                    txtName.setText(customerInfo.getAll()[0].getCustomerName());
+                    txtName.setText(customerInfo.toArray()[0].getCustomerName());
 
-                    for (int i = 0; i < customerInfo.getAll().length; i++) {
-                        String orderId = customerInfo.getAll()[i].getOrderID();
-                        int qty = customerInfo.getAll()[i].getQuantity();
-                        double total = customerInfo.getAll()[i].getTotalPrice();
+                    for (int i = 0; i < customerInfo.toArray().length; i++) {
+                        String orderId = customerInfo.toArray()[i].getOrderID();
+                        int qty = customerInfo.toArray()[i].getQuantity();
+                        double total = customerInfo.toArray()[i].getTotalPrice();
                         model.addRow(new Object[]{orderId, qty, total});
                     }
                 }

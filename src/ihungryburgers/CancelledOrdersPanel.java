@@ -8,7 +8,7 @@ import java.awt.Color;
 import javax.swing.BorderFactory;
 import javax.swing.table.DefaultTableModel;
 import models.Order;
-import models.OrderCollection;
+import models.OrderList;
 import utils.KeyBindUtils;
 
 /**
@@ -17,11 +17,11 @@ import utils.KeyBindUtils;
  */
 public class CancelledOrdersPanel extends javax.swing.JPanel {
     private MainFrame mainFrame;
-    private OrderCollection collection;
+    private OrderList collection;
     /**
      * Creates new form PlaceOrderPanel
      */
-    public CancelledOrdersPanel(MainFrame mainFrame, OrderCollection collection) {
+    public CancelledOrdersPanel(MainFrame mainFrame, OrderList collection) {
         initComponents();
         this.mainFrame = mainFrame;
         this.collection = collection;
@@ -42,10 +42,10 @@ public class CancelledOrdersPanel extends javax.swing.JPanel {
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
         model.setRowCount(0);
         
-        OrderCollection filteredCollection = collection.getFilteredCollection(Order.CANCELLED);
+        OrderList filteredList = collection.getFilteredList(Order.CANCELLED);
         
-        for (int i = 0; i < filteredCollection.getAll().length; i++) {
-            Order o = filteredCollection.getAll()[i];
+        for (int i = 0; i < filteredList.toArray().length; i++) {
+            Order o = filteredList.toArray()[i];
             model.addRow(new Object[]{o.getOrderID(), o.getCustomerID(), o.getCustomerName(), o.getQuantity(), o.getTotalPrice()});
         }
     }

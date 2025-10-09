@@ -8,7 +8,7 @@ import java.awt.Color;
 import javax.swing.BorderFactory;
 import javax.swing.JOptionPane;
 import models.Order;
-import models.OrderCollection;
+import models.OrderList;
 import utils.IdGenerators;
 import utils.KeyBindUtils;
 import utils.Utils;
@@ -20,15 +20,17 @@ import utils.Utils;
 public class PlaceOrderPanel extends javax.swing.JPanel {
 
     private MainFrame mainFrame;
-    private OrderCollection collection;
+    private OrderList orderList;
+    private IdGenerators idGenerator; 
 
     /**
      * Creates new form PlaceOrderPanel
      */
-    public PlaceOrderPanel(MainFrame mainFrame, OrderCollection collection) {
+    public PlaceOrderPanel(MainFrame mainFrame, OrderList orderList) {
         initComponents();
         this.mainFrame = mainFrame;
-        this.collection = collection;
+        this.orderList = orderList;
+        this.idGenerator = new IdGenerators(orderList);
 
         btnCancel.setBorder(BorderFactory.createLineBorder(new Color(0x27000c), 2, true));
         btnGoHome.setBorder(BorderFactory.createLineBorder(new Color(0x27000c), 2, true));
@@ -93,9 +95,9 @@ public class PlaceOrderPanel extends javax.swing.JPanel {
                     return;
                 }
 
-                String customerId = collection.getCustomerId(customerName);
+                String customerId = orderList.getCustomerId(customerName);
                 if (customerId == null) {
-                    customerId = IdGenerators.peekNextCustomerId();
+                    customerId = idGenerator.peekNextCustomerId();
                 }
 
                 txtCustomerId.setText(customerId);
@@ -433,7 +435,7 @@ public class PlaceOrderPanel extends javax.swing.JPanel {
 //    }
 
     private void btnPlaceOrderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPlaceOrderActionPerformed
-        String orderId = IdGenerators.genOrderId(collection);
+        String orderId = idGenerator.genOrderId();
 
         String customerName = txtCustomerName.getText().trim();
         if (customerName.isEmpty()) {
@@ -457,22 +459,29 @@ public class PlaceOrderPanel extends javax.swing.JPanel {
             return;
         }
 
-        String customerId = collection.getCustomerId(customerName);
+        String customerId = orderList.getCustomerId(customerName);
         if (customerId == null) {
-            customerId = IdGenerators.genCustomerId();
+            customerId = idGenerator.genCustomerId();
         }   
 
-        System.out.println(orderId + "  " + customerId + "  " + customerName + "  " + quantity);
-        boolean isPlaced = collection.add(new Order(orderId, customerId, customerName, quantity));
+        System.out.println("Order Placed: "+orderId + "," + customerId + "," + customerName + "," + quantity);
+        Order newOrder = new Order(orderId, customerId, customerName, quantity);
+        orderList.add(newOrder, true);
+        
+        boolean isPlaced = orderList.contains(newOrder);
         if (isPlaced) {
             JOptionPane.showMessageDialog(this, "Order Placed Successfully!", "Info", JOptionPane.INFORMATION_MESSAGE);
+            txtCustomerName.requestFocus();
+            reset();
+        }else {
+            JOptionPane.showMessageDialog(this, "Faild to place the order, Try again!", "Error", JOptionPane.ERROR_MESSAGE);
             txtCustomerName.requestFocus();
             reset();
         }
     }//GEN-LAST:event_btnPlaceOrderActionPerformed
 
     private void reset() {
-        txtOrderId.setText(IdGenerators.genOrderId(collection));
+        txtOrderId.setText(idGenerator.genOrderId());
         txtCustomerName.setText("");
         txtCustomerId.setText("");
         txtQty.setText("");

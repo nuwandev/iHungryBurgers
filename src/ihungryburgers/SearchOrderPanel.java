@@ -8,7 +8,7 @@ import java.awt.Color;
 import javax.swing.BorderFactory;
 import javax.swing.JOptionPane;
 import models.Order;
-import models.OrderCollection;
+import models.OrderList;
 import utils.KeyBindUtils;
 import utils.Utils;
 import utils.Validate;
@@ -20,15 +20,15 @@ import utils.Validate;
 public class SearchOrderPanel extends javax.swing.JPanel {
 
     private MainFrame mainFrame;
-    private OrderCollection collection;
+    private OrderList orderList;
 
     /**
      * Creates new form PlaceOrderPanel
      */
-    public SearchOrderPanel(MainFrame mainFrame, OrderCollection collection) {
+    public SearchOrderPanel(MainFrame mainFrame, OrderList orderList) {
         initComponents();
         this.mainFrame = mainFrame;
-        this.collection = collection;
+        this.orderList = orderList;
         btnBack.setBorder(BorderFactory.createLineBorder(new Color(0x27000c), 2, true));
         KeyBindUtils.bindKey(this, "ESCAPE", () -> btnBack.doClick());
 
@@ -65,7 +65,7 @@ public class SearchOrderPanel extends javax.swing.JPanel {
                 }
 
                 System.out.println("Searching...");
-                Order order = collection.findOrder(orderId);
+                Order order = orderList.findOrder(orderId);
 
                 if (order != null) {
                     txtCustomerId.setText(order.getCustomerID());
@@ -82,7 +82,6 @@ public class SearchOrderPanel extends javax.swing.JPanel {
                 }
             }
 
-            // i really don't know what exactly @override does
             @Override
             public void insertUpdate(javax.swing.event.DocumentEvent e) {
                 showDetails();

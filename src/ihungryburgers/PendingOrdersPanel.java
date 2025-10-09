@@ -8,7 +8,7 @@ import java.awt.Color;
 import javax.swing.BorderFactory;
 import javax.swing.table.DefaultTableModel;
 import models.Order;
-import models.OrderCollection;
+import models.OrderList;
 import utils.KeyBindUtils;
 
 /**
@@ -18,15 +18,15 @@ import utils.KeyBindUtils;
 public class PendingOrdersPanel extends javax.swing.JPanel {
 
     private MainFrame mainFrame;
-    private OrderCollection collection;
+    private OrderList orderList;
 
     /**
      * Creates new form PlaceOrderPanel
      */
-    public PendingOrdersPanel(MainFrame mainFrame, OrderCollection collection) {
+    public PendingOrdersPanel(MainFrame mainFrame, OrderList orderList) {
         initComponents();
         this.mainFrame = mainFrame;
-        this.collection = collection;
+        this.orderList = orderList;
 
         btnBack.setBorder(BorderFactory.createLineBorder(new Color(0x27000c), 2, true));
 
@@ -43,11 +43,11 @@ public class PendingOrdersPanel extends javax.swing.JPanel {
         System.out.println("Reloading table...");
         DefaultTableModel model = (DefaultTableModel) tbl.getModel();
         model.setRowCount(0);
-        
-        OrderCollection filteredCollection = collection.getFilteredCollection(Order.PENDING);
-        
-        for (int i = 0; i < filteredCollection.getAll().length; i++) {
-            Order o = filteredCollection.getAll()[i];
+
+        OrderList filteredOrderList = orderList.getFilteredList(Order.PENDING);
+
+        for (int i = 0; i < filteredOrderList.toArray().length; i++) {
+            Order o = filteredOrderList.toArray()[i];
             model.addRow(new Object[]{o.getOrderID(), o.getCustomerID(), o.getCustomerName(), o.getQuantity(), o.getTotalPrice()});
         }
     }
