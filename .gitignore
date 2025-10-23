@@ -1,0 +1,28 @@
+# From chatgpt but i know what this does... not blindly pasted.
+
+# Compiled class files
+/build/
+/dist/
+/nbproject/private/
+/*.class
+
+# NetBeans cache & temp
+nbproject/private/
+nbbuild/
+nbdist/
+.nb-gradle/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Ignore generated jars
+*.jar
+
+# Ignore user-specific files
+*.iml
+*.ipr
+*.iws

@@ -1,7 +1,7 @@
 package utils;
 
-import models.Order;
-import models.OrderList;
+import model.Order;
+import model.OrderList;
 
 public class IdGenerators {
 
