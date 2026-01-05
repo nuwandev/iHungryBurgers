@@ -63,7 +63,7 @@ src/
 │   │   ├── PreparingOrdersPanel.java
 │   │   ├── DeliveredOrdersPanel.java
 │   │   └── CancelledOrdersPanel.java
-│   └── components/
+│   └── componenets/
 │       └── Button.java            # Custom button component
 ├── storage/
 │   ├── StorageManager.java        # File I/O operations
@@ -177,7 +177,8 @@ java -jar dist/iHungryBurgersV3.jar
 Orders are stored in `src/storage/orders.txt` in CSV format:
 ```
 OrderID,CustomerID,CustomerName,Quantity,TotalPrice,Status
-O001,C001,John Doe,5,2500.0,Pending...
+O001,C001,NuwanDev,11,5500.0,Cancelled
+O002,C001,NuwanDev,7,3500.0,Pending...
 ```
 
 ## Order Status Flow
